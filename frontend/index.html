@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Sweep - Seva Setu | Civic Engagement Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A4123F',
+                        secondary: '#1a1a1a',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="assets/images/logo.png" alt="Clean Sweep Logo" class="h-12">
+            </a>
+            <ul class="hidden md:flex gap-8 items-center" id="nav-links">
+                <!-- Populated by JS -->
+                <li><a href="index.html" class="hover:text-primary transition font-semibold">Home</a></li>
+                <li><a href="browse.html" class="hover:text-primary transition font-semibold">Explore Events</a></li>
+                <li><a href="about.html" class="hover:text-primary transition font-semibold">About</a></li>
+                <li><a href="login.html"
+                        class="bg-primary text-white px-6 py-2 rounded-full hover:bg-red-800 transition font-semibold shadow-md">Get
+                        Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative bg-gray-900 text-white py-32">
+        <div class="absolute inset-0 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+                alt="Volunteers" class="w-full h-full object-cover opacity-40">
+        </div>
+        <div class="relative container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Unite for a Better India</h1>
+            <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto font-light">
+                Join a nationwide movement of citizens, NGOs, and communities. From clean-up drives to tree plantations
+                and health camps — serve your community today.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="login.html#signup" onclick="showRegister('volunteer')"
+                    class="bg-primary hover:bg-red-800 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition transform hover:-translate-y-1">
+                    <i class="fas fa-heart text-sm mr-2"></i> Join as Volunteer
+                </a>
+                <a href="login.html#signup" onclick="showRegister('organizer')"
+                    class="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition transform hover:-translate-y-1">
+                    <i class="fas fa-plus-circle text-sm mr-2"></i> Organize Event
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Categories Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <span class="text-primary font-bold uppercase tracking-wider text-sm">Causes</span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 mt-2">Ways to Contribute</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="p-6 rounded-2xl bg-green-50 hover:bg-green-100 transition cursor-pointer group">
+                    <div
+                        class="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-300 transition">
+                        <i class="fas fa-seedling text-green-700 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Tree Plantation</h3>
+                </div>
+                <div class="p-6 rounded-2xl bg-blue-50 hover:bg-blue-100 transition cursor-pointer group">
+                    <div
+                        class="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-300 transition">
+                        <i class="fas fa-tint text-blue-700 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Blood Donation</h3>
+                </div>
+                <div class="p-6 rounded-2xl bg-yellow-50 hover:bg-yellow-100 transition cursor-pointer group">
+                    <div
+                        class="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow-300 transition">
+                        <i class="fas fa-book-reader text-yellow-700 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Education Support</h3>
+                </div>
+                <div class="p-6 rounded-2xl bg-red-50 hover:bg-red-100 transition cursor-pointer group">
+                    <div
+                        class="w-16 h-16 bg-red-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-red-300 transition">
+                        <i class="fas fa-broom text-red-700 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Clean-up Drives</h3>
+                </div>
+            </div>
+            <div class="mt-12">
+                <a href="browse.html" class="text-primary font-semibold hover:underline">View all categories &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Swachh Bharat Section -->
+    <section class="py-20 bg-gray-100 relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 opacity-10">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Swachh_Bharat_Abhiyan_logo.jpg/220px-Swachh_Bharat_Abhiyan_logo.jpg"
+                alt="Swachh Bharat" class="w-96">
+        </div>
+        <div class="container mx-auto px-6 text-center md:text-left flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Swachh_Bharat_Mission_Logo.svg/500px-Swachh_Bharat_Mission_Logo.svg.png"
+                    alt="Clean India" class="rounded-xl shadow-2xl w-full">
+
+            </div>
+            <div class="md:w-1/2">
+                <div class="inline-block bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                    NATIONAL INITIATIVE</div>
+                <h2 class="text-3xl md:text-5xl font-bold mb-6 text-gray-900">Swachh Bharat Abhiyan</h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    A cleaner India is not just a dream, but a duty. The Swachh Bharat Mission motivates us to take
+                    ownership of our surroundings. Sanitation is more than just cleanliness; it's about dignity and
+                    health for every citizen.
+                </p>
+                <p class="text-lg text-gray-600 mb-8">
+                    Join hands in this historic mass movement to create a "Clean India" by 2019 and sustain it for
+                    generations to come. Your small step can be a giant leap for the nation.
+                </p>
+                <button
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-semibold shadow-md transition">
+                    Pledge your Support
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Section Removed - Moved to login.html -->
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-2xl font-bold font-heading mb-4">Clean Sweep</h3>
+            <p class="text-gray-400 max-w-lg mx-auto mb-8">Empowering communities to build a cleaner, greener, and
+                healthier India. One act of service at a time.</p>
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook fa-lg"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+            <p class="text-gray-600 text-sm">&copy; 2026 Clean Sweep. Built for change.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // No inline auth logic needed
+    </script>
+</body>
+
+</html>

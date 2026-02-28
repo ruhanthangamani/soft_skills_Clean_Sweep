@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Events - Clean Sweep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A4123F',
+                        secondary: '#1a1a1a',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="assets/images/logo.png" alt="Clean Sweep Logo" class="h-10">
+            </a>
+            <ul class="flex gap-8 items-center" id="nav-links">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Filters -->
+    <div class="bg-white border-b py-8">
+        <div class="container mx-auto px-6">
+            <h1 class="text-3xl font-bold font-heading mb-6 text-secondary">Discover Opportunities</h1>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-location" placeholder="Search by location..."
+                        class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition">
+                </div>
+                <div class="relative flex-1">
+                    <i class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="search-category"
+                        class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition appearance-none">
+                        <option value="">All Categories</option>
+                        <option>Clean-up Drive</option>
+                        <option>Tree Plantation</option>
+                        <option>Blood Donation</option>
+                        <option>Health Camp</option>
+                        <option>Education Support</option>
+                        <option>Food Distribution</option>
+                        <option>Disaster Relief</option>
+                    </select>
+                </div>
+                <input type="date"
+                    class="flex-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition">
+                <button
+                    class="bg-primary hover:bg-red-800 text-white px-8 py-3 rounded-lg font-bold shadow-md transition">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="flex-grow container mx-auto px-6 py-12">
+        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Events populated here -->
+            <div class="col-span-full text-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p class="mt-4 text-gray-500">Loading events...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-500 text-sm">&copy; 2026 Clean Sweep. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadEvents);
+
+        async function loadEvents() {
+            const grid = document.getElementById('events-grid');
+            const categoryFilter = document.getElementById('search-category').value;
+            const res = await apiCall('/events/');
+
+            if (res.ok) {
+                grid.innerHTML = '';
+                if (res.data.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+                            <i class="far fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 text-lg">No upcoming events found.</p>
+                        </div>`;
+                    return;
+                }
+
+                res.data.forEach(event => {
+                    const card = document.createElement('div');
+                    card.className = 'group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 overflow-hidden flex flex-col h-full';
+
+                    // Random gradients for placeholders if no image
+                    const gradients = [
+                        'bg-gradient-to-r from-pink-500 to-rose-500',
+                        'bg-gradient-to-r from-green-400 to-emerald-500',
+                        'bg-gradient-to-r from-blue-400 to-indigo-500',
+                        'bg-gradient-to-r from-yellow-400 to-orange-500'
+                    ];
+                    const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+
+                    const imageHtml = event.image_url
+                        ? `<div class="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${event.image_url}')"></div>`
+                        : `<div class="h-48 w-full ${randomGradient} flex items-center justify-center text-white text-4xl font-bold opacity-80"><i class="fas fa-hand-holding-heart"></i></div>`;
+
+                    card.innerHTML = `
+                        <div class="relative overflow-hidden">
+                            ${imageHtml}
+                            <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow-sm uppercase tracking-wider">
+                                ${event.category || 'General'}
+                            </span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-xl mb-2 text-secondary group-hover:text-primary transition">${event.title}</h3>
+                            <div class="flex items-center text-sm text-gray-500 mb-4 space-x-4">
+                                <span><i class="fas fa-map-marker-alt mr-1 text-red-400"></i> ${event.location}</span>
+                                <span><i class="far fa-calendar-alt mr-1 text-blue-400"></i> ${event.date}</span>
+                            </div>
+                            <p class="text-gray-600 mb-6 text-sm line-clamp-3">${event.description}</p>
+                            <div class="mt-auto">
+                                <button onclick="joinEvent(${event.id})" class="w-full bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-2 rounded-lg transition duration-300">
+                                    Join Activity
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else {
+                grid.innerHTML = '<p class="text-red-500 text-center col-span-full">Failed to load events.</p>';
+            }
+        }
+
+        async function joinEvent(eventId) {
+            if (!isLoggedIn()) {
+                alert('Please login to join an event.');
+                window.location.href = '/index.html#login-section';
+                return;
+            }
+            if (getUser().role === 'organizer') {
+                alert('Organizers cannot join events as volunteers.');
+                return;
+            }
+
+            const res = await apiCall(`/events/${eventId}/join`, 'POST');
+            if (res.ok) {
+                // Show success modal or toast instead of alert ideally, but alert is fine for now
+                const btn = event.target; // This wont work exactly as is due to scope, but simplified
+                alert('Successfully joined! Check your dashboard.');
+            } else {
+                alert(res.data.error || 'Failed to join');
+            }
+        }
+    </script>
+</body>
+
+</html>

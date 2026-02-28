@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Clean Sweep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A4123F',
+                        secondary: '#1a1a1a',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="assets/images/logo.png" alt="Clean Sweep Logo" class="h-10">
+            </a>
+            <ul class="flex gap-8 items-center" id="nav-links">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-12">
+        <h1 class="text-3xl font-bold font-heading mb-8 text-secondary">My Impact Dashboard</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Upcoming Events -->
+            <div class="bg-white p-6 rounded-xl shadow-lg h-fit">
+                <div class="flex items-center justify-between mb-6 pb-2 border-b">
+                    <h2 class="text-xl font-bold text-primary flex items-center gap-2"><i
+                            class="fas fa-calendar-check text-green-500"></i> Upcoming Activities</h2>
+                </div>
+                <div id="upcoming-events" class="space-y-4">
+                    <p class="text-gray-500 italic">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Past Events -->
+            <div class="bg-white p-6 rounded-xl shadow-lg h-fit opacity-80 hover:opacity-100 transition">
+                <div class="flex items-center justify-between mb-6 pb-2 border-b">
+                    <h2 class="text-xl font-bold text-gray-700 flex items-center gap-2"><i
+                            class="fas fa-history text-gray-400"></i> Participation History</h2>
+                </div>
+                <div id="past-events" class="space-y-4">
+                    <p class="text-gray-500 italic">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-500 text-sm">&copy; 2026 Clean Sweep. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Auth Check
+        if (!isLoggedIn() || getUser().role !== 'volunteer') {
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMyEvents);
+
+        async function loadMyEvents() {
+            const upcomingContainer = document.getElementById('upcoming-events');
+            const pastContainer = document.getElementById('past-events');
+
+            const res = await apiCall('/events/my-events');
+
+            if (res.ok) {
+                upcomingContainer.innerHTML = '';
+                pastContainer.innerHTML = '';
+
+                if (res.data.length === 0) {
+                    upcomingContainer.innerHTML = '<p class="text-gray-500 text-sm">You haven\'t joined any activities yet.</p>';
+                } else {
+                    const today = new Date().toISOString().split('T')[0];
+                    let hasUpcoming = false;
+                    let hasPast = false;
+
+                    res.data.forEach(event => {
+                        const item = document.createElement('div');
+                        item.className = 'border-l-4 border-primary pl-4 py-2 hover:bg-gray-50 transition rounded-r-lg';
+                        item.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-lg text-secondary">${event.title}</h3>
+                                    <p class="text-xs text-uppercase font-semibold tracking-wider text-gray-500 mb-1">${event.category || 'General'}</p>
+                                    <p class="text-sm text-gray-600"><i class="far fa-calendar-alt text-blue-400 mr-1"></i> ${event.date} | <i class="fas fa-map-marker-alt text-red-400 mx-1"></i> ${event.location}</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold">JOINED</span>
+                            </div>
+                        `;
+
+                        if (event.date >= today) {
+                            upcomingContainer.appendChild(item);
+                            hasUpcoming = true;
+                        } else {
+                            // Make past items look 'done'
+                            item.className = 'border-l-4 border-gray-400 pl-4 py-2 opacity-75';
+                            item.querySelector('.bg-green-100').className = 'bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded font-bold';
+                            item.querySelector('.bg-gray-200').innerText = 'COMPLETED';
+                            pastContainer.appendChild(item);
+                            hasPast = true;
+                        }
+                    });
+
+                    if (!hasUpcoming) upcomingContainer.innerHTML = '<p class="text-gray-500 text-sm">No upcoming activities.</p>';
+                    if (!hasPast) pastContainer.innerHTML = '<p class="text-gray-500 text-sm">No past participation.</p>';
+                }
+            } else {
+                upcomingContainer.innerHTML = '<p class="text-red-500">Failed to load events.</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>

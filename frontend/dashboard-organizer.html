@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard - Clean Sweep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A4123F',
+                        secondary: '#1a1a1a',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="assets/images/logo.png" alt="Clean Sweep Logo" class="h-10">
+            </a>
+            <ul class="flex gap-8 items-center" id="nav-links">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-12">
+        <h1 class="text-3xl font-bold font-heading mb-8 text-secondary">Organizer Dashboard</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Create Event Form -->
+            <div class="bg-white p-8 rounded-xl shadow-lg h-fit">
+                <h2 class="text-xl font-bold mb-6 text-primary border-b pb-2">Create New Event</h2>
+                <form id="create-event-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Event Title</label>
+                        <input type="text" id="evt-title"
+                            class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition"
+                            required>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="evt-date"
+                                class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select id="evt-category"
+                                class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition">
+                                <option>Clean-up Drive</option>
+                                <option>Tree Plantation</option>
+                                <option>Blood Donation</option>
+                                <option>Health Camp</option>
+                                <option>Education Support</option>
+                                <option>Food Distribution</option>
+                                <option>Disaster Relief</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <input type="text" id="evt-location"
+                            class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Image URL (Optional)</label>
+                        <input type="url" id="evt-image"
+                            class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition"
+                            placeholder="https://...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="evt-desc" rows="4"
+                            class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition"
+                            required></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-primary hover:bg-red-800 text-white font-bold py-3 rounded-lg shadow-md transition transform hover:scale-[1.02]">
+                        Publish Event
+                    </button>
+                </form>
+            </div>
+
+            <!-- My Events List -->
+            <div class="lg:col-span-2">
+                <h2 class="text-xl font-bold mb-6 text-gray-700">My Managed Events</h2>
+                <div id="my-events-list" class="space-y-4">
+                    <p class="text-gray-500 italic">Loading your events...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participants Modal -->
+    <div id="participants-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full mx-4 relative animate-fade-in-up">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-4 text-secondary flex items-center gap-2">
+                <i class="fas fa-users text-primary"></i> Participants
+            </h2>
+            <div id="participants-list" class="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Populated by JS -->
+                <p class="text-gray-500">Loading...</p>
+            </div>
+            <div id="modal-footer" class="mt-6 flex justify-end hidden">
+                <button id="download-btn"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2">
+                    <i class="fas fa-file-excel"></i> Download CSV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Auth Check
+        if (!isLoggedIn() || getUser().role !== 'organizer') {
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMyEvents);
+
+        document.getElementById('create-event-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const eventData = {
+                title: document.getElementById('evt-title').value,
+                date: document.getElementById('evt-date').value,
+                location: document.getElementById('evt-location').value,
+                category: document.getElementById('evt-category').value,
+                description: document.getElementById('evt-desc').value,
+                image_url: document.getElementById('evt-image').value
+            };
+
+            const res = await apiCall('/events/', 'POST', eventData);
+            if (res.ok) {
+                alert('Event created successfully!');
+                document.getElementById('create-event-form').reset();
+                loadMyEvents();
+            } else {
+                alert(res.data.error || 'Failed to create event');
+            }
+        });
+
+        async function loadMyEvents() {
+            const list = document.getElementById('my-events-list');
+            const res = await apiCall('/events/my-events');
+
+            if (res.ok) {
+                list.innerHTML = '';
+                if (res.data.length === 0) {
+                    list.innerHTML = `
+                        <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+                            <p class="text-gray-500">You haven't organized any events yet.</p>
+                        </div>`;
+                } else {
+                    res.data.forEach(event => {
+                        const item = document.createElement('div');
+                        item.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex justify-between items-center';
+                        item.innerHTML = `
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <span class="text-xs font-bold uppercase tracking-wide text-primary bg-red-50 px-2 py-1 rounded">${event.category || 'Event'}</span>
+                                    <h3 class="font-bold text-lg text-secondary">${event.title}</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 mb-1"><i class="far fa-calendar-alt mr-1"></i> ${event.date} &bull; <i class="fas fa-map-marker-alt mx-1"></i> ${event.location}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-2">
+                                    ${event.status}
+                                </span>
+                                <div class="flex flex-col gap-2 items-end">
+                                    <button onclick="viewParticipants(${event.id})" class="text-xs text-primary hover:text-red-700 font-semibold underline">
+                                        View Participants
+                                    </button>
+                                    ${event.status === 'upcoming' ? `
+                                    <button onclick="closeEvent(${event.id})" class="text-xs text-red-500 hover:text-red-700 font-semibold underline">
+                                        Close Event
+                                    </button>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        list.appendChild(item);
+                    });
+                }
+            } else {
+                list.innerHTML = '<p class="text-red-500">Failed to load events.</p>';
+            }
+        }
+
+        async function viewParticipants(eventId) {
+            const modal = document.getElementById('participants-modal');
+            const list = document.getElementById('participants-list');
+            modal.classList.remove('hidden');
+            list.innerHTML = '<p class="text-gray-500 italic">Fetching participants...</p>';
+
+            const res = await apiCall(`/events/${eventId}/participants`);
+
+            if (res.ok) {
+                list.innerHTML = '';
+                if (res.data.length === 0) {
+                    list.innerHTML = `<div class="text-center py-8 text-gray-500">
+                        <i class="far fa-user-circle text-4xl mb-2 text-gray-300"></i>
+                        <p>No volunteers have joined yet.</p>
+                    </div>`;
+                    document.getElementById('modal-footer').classList.add('hidden');
+                } else {
+                    document.getElementById('modal-footer').classList.remove('hidden');
+                    document.getElementById('download-btn').onclick = () => downloadCSV(eventId, res.data);
+                    res.data.forEach(p => {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100';
+                        row.innerHTML = `
+                            <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                                ${p.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800">${p.name}</p>
+                                <p class="text-sm text-gray-500">${p.email}</p>
+                            </div>
+                            <div class="ml-auto text-xs text-gray-400">
+                                ${new Date(p.signup_date).toLocaleDateString()}
+                            </div>
+                        `;
+                        list.appendChild(row);
+                    });
+                }
+            } else {
+                list.innerHTML = '<p class="text-red-500">Failed to load participants.</p>';
+            }
+        }
+
+        async function closeEvent(eventId) {
+            if (!confirm('Are you sure you want to close this event? It will no longer be open for signups.')) return;
+
+            const res = await apiCall(`/events/${eventId}/status`, 'POST', { status: 'closed' });
+            if (res.ok) {
+                loadMyEvents();
+            } else {
+                alert(res.data.error || 'Failed to close event');
+            }
+        }
+
+        function downloadCSV(eventId, participants) {
+            const headers = ['Name', 'Email', 'Signup Date'];
+            const rows = participants.map(p => [
+                p.name,
+                p.email,
+                new Date(p.signup_date).toLocaleString()
+            ]);
+
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(r => r.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `participants_event_${eventId}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function closeModal() {
+            document.getElementById('participants-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>
