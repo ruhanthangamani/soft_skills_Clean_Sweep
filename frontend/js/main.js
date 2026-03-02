@@ -64,11 +64,19 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
     try {
         const response = await fetch(`${API_BASE}${endpoint}`, options);
-        const data = await response.json();
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (jsonErr) {
+            console.error('JSON Parse Error:', jsonErr);
+            return { ok: false, error: `Server Error ${response.status}: ${response.statusText}` };
+        }
+
         return { ok: response.ok, data, status: response.status };
     } catch (error) {
         console.error('API Error:', error);
-        return { ok: false, error };
+        return { ok: false, error: `Network fail: ${error.message}` };
     }
 }
 
@@ -83,8 +91,9 @@ async function login(email, password) {
         console.log('DEBUG: Redirecting to', redirectUrl);
         window.location.href = redirectUrl;
     } else {
-        console.error('DEBUG: Login failed', res.data.error);
-        alert(res.data.error || 'Login failed');
+        const errorMsg = (res.data && res.data.error) ? res.data.error : res.error;
+        console.error('DEBUG: Login failed', errorMsg);
+        alert(errorMsg || 'Login failed');
     }
 }
 
@@ -94,7 +103,8 @@ async function register(name, email, password, role) {
         console.log('DEBUG: Registration successful, logging in...');
         await login(email, password);
     } else {
-        alert(res.data.error || 'Registration failed');
+        const errorMsg = (res.data && res.data.error) ? res.data.error : res.error;
+        alert(errorMsg || 'Registration failed');
     }
 }
 
