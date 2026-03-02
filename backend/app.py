@@ -8,11 +8,7 @@ from routes.events import events_bp
 app = Flask(__name__, static_folder='../frontend', static_url_path='/')
 app.config.from_object(Config)
 
-# Initialize DB
-try:
-    init_db()
-except Exception as e:
-    print(f"Database initialization skipped or failed: {e}")
+# Database is now initialized manually via Supabase SQL Editor
 
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
