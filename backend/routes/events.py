@@ -28,7 +28,7 @@ def create_event():
         return jsonify({'error': 'Missing fields'}), 400
 
     conn = get_db_connection()
-    conn.execute('INSERT INTO events (organizer_id, title, description, location, date, category, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    conn.execute('INSERT INTO events (organizer_id, title, description, location, date, category, image_url) VALUES (%s, %s, %s, %s, %s, %s, %s)',
                  (session['user_id'], title, description, location, date, category, image_url))
     conn.commit()
     conn.close()
@@ -42,10 +42,10 @@ def join_event(event_id):
 
     conn = get_db_connection()
     try:
-        conn.execute('INSERT INTO signups (event_id, volunteer_id) VALUES (?, ?)',
+        conn.execute('INSERT INTO signups (event_id, volunteer_id) VALUES (%s, %s)',
                      (event_id, session['user_id']))
         conn.commit()
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         return jsonify({'error': 'Already joined this event'}), 409
     finally:
         conn.close()
@@ -59,13 +59,13 @@ def my_events():
 
     conn = get_db_connection()
     if session['role'] == 'organizer':
-        events = conn.execute('SELECT * FROM events WHERE organizer_id = ?', (session['user_id'],)).fetchall()
+        events = conn.execute('SELECT * FROM events WHERE organizer_id = %s', (session['user_id'],)).fetchall()
     else:
         # For volunteers, fetch events they signed up for
         events = conn.execute('''
             SELECT e.* FROM events e
             JOIN signups s ON e.id = s.event_id
-            WHERE s.volunteer_id = ?
+            WHERE s.volunteer_id = %s
         ''', (session['user_id'],)).fetchall()
     
     conn.close()
@@ -78,7 +78,7 @@ def get_event_participants(event_id):
 
     conn = get_db_connection()
     # verify event belongs to organizer
-    event = conn.execute('SELECT organizer_id FROM events WHERE id = ?', (event_id,)).fetchone()
+    event = conn.execute('SELECT organizer_id FROM events WHERE id = %s', (event_id,)).fetchone()
     if not event:
         conn.close()
         return jsonify({'error': 'Event not found'}), 404
@@ -93,7 +93,7 @@ def get_event_participants(event_id):
         SELECT u.name, u.email, s.signup_date
         FROM users u
         JOIN signups s ON u.id = s.volunteer_id
-        WHERE s.event_id = ?
+        WHERE s.event_id = %s
     ''', (event_id,)).fetchall()
     
     conn.close()
@@ -111,7 +111,7 @@ def update_event_status(event_id):
 
     conn = get_db_connection()
     # verify event belongs to organizer
-    event = conn.execute('SELECT organizer_id FROM events WHERE id = ?', (event_id,)).fetchone()
+    event = conn.execute('SELECT organizer_id FROM events WHERE id = %s', (event_id,)).fetchone()
     if not event:
         conn.close()
         return jsonify({'error': 'Event not found'}), 404
@@ -120,7 +120,7 @@ def update_event_status(event_id):
          conn.close()
          return jsonify({'error': 'Unauthorized to modify this event'}), 403
 
-    conn.execute('UPDATE events SET status = ? WHERE id = ?', (status, event_id))
+    conn.execute('UPDATE events SET status = %s WHERE id = %s', (status, event_id))
     conn.commit()
     conn.close()
 

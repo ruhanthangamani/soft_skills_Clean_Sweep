@@ -2,7 +2,7 @@
 
 -- Users Table (Organizers and Volunteers)
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Events Table
 CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     organizer_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS events (
 
 -- Signups Table (Volunteers joining events)
 CREATE TABLE IF NOT EXISTS signups (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     event_id INTEGER NOT NULL,
     volunteer_id INTEGER NOT NULL,
     signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

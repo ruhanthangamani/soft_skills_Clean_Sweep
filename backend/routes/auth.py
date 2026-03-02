@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-import sqlite3
+import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.db import get_db_connection
 
@@ -22,10 +22,11 @@ def register():
     hashed_password = generate_password_hash(password)
     conn = get_db_connection()
     try:
-        conn.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        conn.execute('INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)',
                      (name, email, hashed_password, role))
         conn.commit()
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
+        conn.close()
         return jsonify({'error': 'Email already registered'}), 409
     finally:
         conn.close()
@@ -41,7 +42,7 @@ def login():
     print(f"DEBUG: Login attempt for email: {email}")
 
     conn = get_db_connection()
-    user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+    user = conn.execute('SELECT * FROM users WHERE email = %s', (email,)).fetchone()
     conn.close()
 
     if user:
