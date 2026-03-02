@@ -66,9 +66,9 @@
                         <option>Disaster Relief</option>
                     </select>
                 </div>
-                <input type="date"
+                <input type="date" id="search-date"
                     class="flex-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-red-100 outline-none transition">
-                <button
+                <button onclick="applyFilters()"
                     class="bg-primary hover:bg-red-800 text-white px-8 py-3 rounded-lg font-bold shadow-md transition">
                     Search
                 </button>
@@ -96,67 +96,83 @@
 
     <script src="js/main.js"></script>
     <script>
+        let allEvents = [];
+
         document.addEventListener('DOMContentLoaded', loadEvents);
 
         async function loadEvents() {
             const grid = document.getElementById('events-grid');
-            const categoryFilter = document.getElementById('search-category').value;
             const res = await apiCall('/events/');
 
             if (res.ok) {
-                grid.innerHTML = '';
-                if (res.data.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
-                            <i class="far fa-calendar-times text-4xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 text-lg">No upcoming events found.</p>
-                        </div>`;
-                    return;
-                }
-
-                res.data.forEach(event => {
-                    const card = document.createElement('div');
-                    card.className = 'group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 overflow-hidden flex flex-col h-full';
-
-                    // Random gradients for placeholders if no image
-                    const gradients = [
-                        'bg-gradient-to-r from-pink-500 to-rose-500',
-                        'bg-gradient-to-r from-green-400 to-emerald-500',
-                        'bg-gradient-to-r from-blue-400 to-indigo-500',
-                        'bg-gradient-to-r from-yellow-400 to-orange-500'
-                    ];
-                    const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-
-                    const imageHtml = event.image_url
-                        ? `<div class="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${event.image_url}')"></div>`
-                        : `<div class="h-48 w-full ${randomGradient} flex items-center justify-center text-white text-4xl font-bold opacity-80"><i class="fas fa-hand-holding-heart"></i></div>`;
-
-                    card.innerHTML = `
-                        <div class="relative overflow-hidden">
-                            ${imageHtml}
-                            <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow-sm uppercase tracking-wider">
-                                ${event.category || 'General'}
-                            </span>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="font-bold text-xl mb-2 text-secondary group-hover:text-primary transition">${event.title}</h3>
-                            <div class="flex items-center text-sm text-gray-500 mb-4 space-x-4">
-                                <span><i class="fas fa-map-marker-alt mr-1 text-red-400"></i> ${event.location}</span>
-                                <span><i class="far fa-calendar-alt mr-1 text-blue-400"></i> ${event.date}</span>
-                            </div>
-                            <p class="text-gray-600 mb-6 text-sm line-clamp-3">${event.description}</p>
-                            <div class="mt-auto">
-                                <button onclick="joinEvent(${event.id})" class="w-full bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-2 rounded-lg transition duration-300">
-                                    Join Activity
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                allEvents = res.data;
+                renderEvents(allEvents);
             } else {
                 grid.innerHTML = '<p class="text-red-500 text-center col-span-full">Failed to load events.</p>';
             }
+        }
+
+        function renderEvents(eventsToRender) {
+            const grid = document.getElementById('events-grid');
+            grid.innerHTML = '';
+
+            if (eventsToRender.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+                        <i class="far fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">No upcoming events found matching your criteria.</p>
+                    </div>`;
+                return;
+            }
+
+            eventsToRender.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 overflow-hidden flex flex-col h-full';
+
+                const fallbackImg = 'https://images.unsplash.com/photo-1593113511332-61dbbd760ab4?q=80&w=800&auto=format&fit=crop';
+                const isValidUrl = event.image_url && event.image_url.startsWith('http');
+                const imgUrl = isValidUrl ? event.image_url : fallbackImg;
+
+                const imageHtml = `<img src="${imgUrl}" onerror="this.src='${fallbackImg}'" class="h-48 w-full object-cover transition duration-500 group-hover:scale-105" alt="${event.title}">`;
+
+                card.innerHTML = `
+                    <div class="relative overflow-hidden">
+                        ${imageHtml}
+                        <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow-sm uppercase tracking-wider">
+                            ${event.category || 'General'}
+                        </span>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-bold text-xl mb-2 text-secondary group-hover:text-primary transition">${event.title}</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-4 space-x-4">
+                            <span><i class="fas fa-map-marker-alt mr-1 text-red-400"></i> ${event.location}</span>
+                            <span><i class="far fa-calendar-alt mr-1 text-blue-400"></i> ${event.date}</span>
+                        </div>
+                        <p class="text-gray-600 mb-6 text-sm line-clamp-3">${event.description}</p>
+                        <div class="mt-auto">
+                            <button onclick="joinEvent(${event.id})" class="w-full bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-2 rounded-lg transition duration-300">
+                                Join Activity
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function applyFilters() {
+            const locFilter = document.getElementById('search-location').value.toLowerCase();
+            const catFilter = document.getElementById('search-category').value;
+            const dateFilter = document.getElementById('search-date').value;
+
+            const filtered = allEvents.filter(event => {
+                const matchLoc = !locFilter || event.location.toLowerCase().includes(locFilter);
+                const matchCat = !catFilter || event.category === catFilter;
+                const matchDate = !dateFilter || event.date === dateFilter;
+                return matchLoc && matchCat && matchDate;
+            });
+
+            renderEvents(filtered);
         }
 
         async function joinEvent(eventId) {

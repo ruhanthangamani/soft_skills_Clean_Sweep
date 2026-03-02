@@ -51,9 +51,9 @@
                 <div class="text-center mb-8">
                     <h2 id="auth-title" class="text-2xl font-bold text-gray-800">Welcome Back</h2>
                     <div class="flex justify-center gap-4 mt-4">
-                        <button onclick="showLogin()"
+                        <button id="tab-login" onclick="showLogin()"
                             class="text-sm font-semibold text-primary border-b-2 border-primary pb-1 focus:outline-none">Login</button>
-                        <button onclick="showRegister('volunteer')"
+                        <button id="tab-register" onclick="showRegister('volunteer')"
                             class="text-sm font-semibold text-gray-500 hover:text-primary transition focus:outline-none">Sign
                             Up</button>
                     </div>
@@ -138,10 +138,22 @@
         const registerForm = document.getElementById('register-form');
         const regRole = document.getElementById('reg-role');
 
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+
+        const activeStyles = ['text-primary', 'border-b-2', 'border-primary'];
+        const inactiveStyles = ['text-gray-500', 'hover:text-primary'];
+
         function showLogin() {
             authTitle.innerText = 'Welcome Back';
             loginForm.classList.remove('hidden');
             registerForm.classList.add('hidden');
+
+            tabLogin.classList.remove(...inactiveStyles);
+            tabLogin.classList.add(...activeStyles);
+
+            tabRegister.classList.remove(...activeStyles);
+            tabRegister.classList.add(...inactiveStyles);
         }
 
         function showRegister(role) {
@@ -149,6 +161,12 @@
             loginForm.classList.add('hidden');
             registerForm.classList.remove('hidden');
             if (role) regRole.value = role;
+
+            tabRegister.classList.remove(...inactiveStyles);
+            tabRegister.classList.add(...activeStyles);
+
+            tabLogin.classList.remove(...activeStyles);
+            tabLogin.classList.add(...inactiveStyles);
         }
 
         loginForm.addEventListener('submit', async (e) => {
