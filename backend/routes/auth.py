@@ -10,6 +10,8 @@ def register():
     data = request.get_json()
     name = data.get('name')
     email = data.get('email')
+    if email:
+        email = email.lower()
     password = data.get('password')
     role = data.get('role')
 
@@ -37,6 +39,8 @@ def register():
 def login():
     data = request.get_json()
     email = data.get('email')
+    if email:
+        email = email.lower()
     password = data.get('password')
     
     print(f"DEBUG: Login attempt for email: {email}")
